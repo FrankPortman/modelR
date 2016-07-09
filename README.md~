@@ -8,4 +8,3 @@ Deploy &amp; Monitor ML Models directly from R
 - you MUST kill the previous deploy.R process since shiny won't do it. working on this
   - ps aux | grep deploy.R and then kill that process
 - test the reactive file reader with the bash file
-- previous_inputs.log must exist or shiny will freak out

@@ -1,0 +1,1 @@
+while [ 1 ]; do time curl "http://localhost:8001/mean"; sleep .2; done

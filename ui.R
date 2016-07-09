@@ -24,8 +24,8 @@ shinyUI(fluidPage(
 
     # Show a plot of the generated distribution
     mainPanel(
-      plotOutput("distPlot"),
-      verbatimTextOutput("fileReaderText")
+      plotOutput("distPlot")
+      ,verbatimTextOutput("fileReaderText")
     )
   )
 ))
