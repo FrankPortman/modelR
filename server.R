@@ -27,6 +27,11 @@ shinyServer(function(input, output) {
                  system("kill -9 `cat save_pid.txt`")
                  system("nohup Rscript deploy.R & echo $! > save_pid.txt")
                })
+  
+  observeEvent(input$test,
+               {
+                 system("nohup gtimeout 15s bash testReactiveFileReader.sh &")
+               })
 
   output$fileReaderText <- renderText({
     # Read the text, and make it a consistent number of lines so

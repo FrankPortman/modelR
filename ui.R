@@ -20,7 +20,8 @@ shinyUI(fluidPage(
       h3("PID = 12345"),
       actionButton("kill", "Kill Model"),
       actionButton("redeploy", "Redeploy Model"),
-      actionButton("clear", "Clear Logs")
+      actionButton("clear", "Clear Logs"),
+      actionButton("test", "Streaming Stress Test")
     ),
     
     # Show a plot of the generated distribution
