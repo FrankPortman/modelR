@@ -8,24 +8,24 @@
 library(shiny)
 
 shinyUI(fluidPage(
-
+  
   # Application title
-  titlePanel("Old Faithful Geyser Data"),
-
+  titlePanel("modelR PoC"),
+  
   # Sidebar with a slider input for number of bins
   sidebarLayout(
     sidebarPanel(
-      sliderInput("bins",
-                  "Number of bins:",
-                  min = 1,
-                  max = 50,
-                  value = 30)
+      h2("Model Status"),
+      h2("Deployed"),
+      h3("PID = 12345"),
+      actionButton("kill", "Kill Model"),
+      actionButton("redeploy", "Redeploy Model"),
+      actionButton("clear", "Clear Logs")
     ),
-
+    
     # Show a plot of the generated distribution
     mainPanel(
-      plotOutput("distPlot")
-      ,verbatimTextOutput("fileReaderText")
+      verbatimTextOutput("fileReaderText")
     )
   )
 ))
