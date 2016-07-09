@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(plumber)\nr <- plumb(\"mean.R\")  # Where 'myfile.R' is the location of the file shown above\nr$run(port=8001)",
+    "created" : 1468098761456.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2416571953",
+    "id" : "D52DA539",
+    "lastKnownWriteTime" : 1468099040,
+    "last_content_update" : 1468099040256,
+    "path" : "~/packages/modelR/deploy.R",
+    "project_path" : "deploy.R",
+    "properties" : {
+        "tempName" : "Untitled2"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
