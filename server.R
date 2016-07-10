@@ -8,6 +8,10 @@
 library(shiny)
 library(plumber)
 
+if (!file.exists("logs/previous_inputs.log")) {
+  file.create("logs/previous_inputs.log")
+}
+
 fileReaderData <- reactiveFileReader(500, session = NULL, 'logs/previous_inputs.log', readLines)
 system("nohup Rscript deploy.R & echo $! > save_pid.txt")
 
