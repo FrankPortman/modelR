@@ -20,6 +20,8 @@ current_pid <- reactiveFileReader(1000, session = NULL, 'save_pid.txt', readLine
 system("pkill -f deploy.R")
 system("nohup Rscript deploy.R & echo $! > save_pid.txt")
 
+pred_function <- "mean"
+
 shinyServer(function(input, output) {
   
   ##kill model function
@@ -43,7 +45,10 @@ shinyServer(function(input, output) {
                    file.remove("logs/stdoutFile.txt")
                  }
                  
-                 system("function timeout() { perl -e 'alarm shift; exec @ARGV' \"$@\"; }; timeout 15 bash testReactiveFileReader.sh &")
+                 systemCall <- paste0 ("function timeout() { perl -e 'alarm shift; exec @ARGV' \"$@\"; }; ",
+                                       "timeout 15 bash testReactiveFileReader.sh curl http://localhost:8001/",
+                                       pred_function, " &")
+                 system(systemCall)
                  #system("nohup gtimeout 15s bash testReactiveFileReader.sh &")
                })
   
@@ -51,6 +56,8 @@ shinyServer(function(input, output) {
   
   output$serverStatusText <- renderText({
     checkServerStatus()
+    serverStatusCall <- paste0("curl -s \"http://localhost:8001/",
+                               pred_function,"\" >/dev/null; echo $? &")
     serverStatus <- system("curl -s \"http://localhost:8001/mean\" >/dev/null; echo $? &", intern = TRUE)
     if (serverStatus == 0) {
       result <- c("Deployed")
