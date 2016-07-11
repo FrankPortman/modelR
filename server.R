@@ -16,6 +16,7 @@ if (!file.exists("logs/previous_inputs.log")) {
 fileReaderData <- reactiveFileReader(500, session = NULL, 'logs/previous_inputs.log', readLines)
 fileReaderTimes <- reactiveFileReader(500, session = NULL, 'logs/stdoutFile.txt', readLines)
 
+system("pkill -f deploy.R")
 system("nohup Rscript deploy.R & echo $! > save_pid.txt")
 
 shinyServer(function(input, output) {
