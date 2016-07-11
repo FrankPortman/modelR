@@ -21,12 +21,18 @@ shinyUI(fluidPage(
       actionButton("kill", "Kill Model"),
       actionButton("redeploy", "Redeploy Model"),
       actionButton("clear", "Clear Logs"),
-      actionButton("test", "Streaming Stress Test")
+      actionButton("test", "Streaming Stress Test"),
+      actionButton("displayTime","Display Time")
     ),
     
     # Show a plot of the generated distribution
     mainPanel(
-      verbatimTextOutput("fileReaderText")
+      tabsetPanel(type = "tabs", 
+                  tabPanel("Output", verbatimTextOutput("fileReaderText")), 
+                  tabPanel("Latency Plot", plotOutput("timePlot")), 
+                  tabPanel("Latency Summary", verbatimTextOutput("timeSummary"))
+      )
     )
+    
   )
 ))

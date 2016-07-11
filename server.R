@@ -7,12 +7,15 @@
 
 library(shiny)
 library(plumber)
+library(ggplot2)
 
 if (!file.exists("logs/previous_inputs.log")) {
   file.create("logs/previous_inputs.log")
 }
 
 fileReaderData <- reactiveFileReader(500, session = NULL, 'logs/previous_inputs.log', readLines)
+fileReaderTimes <- reactiveFileReader(500, session = NULL, 'logs/stdoutFile.txt', readLines)
+
 system("nohup Rscript deploy.R & echo $! > save_pid.txt")
 
 shinyServer(function(input, output) {
@@ -34,9 +37,14 @@ shinyServer(function(input, output) {
   
   observeEvent(input$test,
                {
+                 if (file.exists("logs/stdoutFile.txt")) {
+                   file.remove("logs/stdoutFile.txt")
+                 }
+                 
                  system("function timeout() { perl -e 'alarm shift; exec @ARGV' \"$@\"; }; timeout 15 bash testReactiveFileReader.sh &")
                  #system("nohup gtimeout 15s bash testReactiveFileReader.sh &")
                })
+  
   
   output$fileReaderText <- renderText({
     # Read the text, and make it a consistent number of lines so
@@ -47,4 +55,13 @@ shinyServer(function(input, output) {
     paste(text, collapse = '\n')
   })
   
+  output$timeSummary <- renderPrint({
+    latencies <- as.numeric(fileReaderTimes())
+    summary(latencies)
+  })
+  
+  output$timePlot <- renderPlot({
+    latencies <- as.numeric(fileReaderTimes())
+    ggplot2::qplot(latencies)
+  })
 })
