@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+nohup.out
+save_pid.txt
+logs/previous_inputs.log
+logs/stdoutFile.txt
