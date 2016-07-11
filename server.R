@@ -34,9 +34,10 @@ shinyServer(function(input, output) {
   
   observeEvent(input$test,
                {
-                 system("nohup gtimeout 15s bash testReactiveFileReader.sh &")
+                 system("function timeout() { perl -e 'alarm shift; exec @ARGV' \"$@\"; }; timeout 15 bash testReactiveFileReader.sh &")
+                 #system("nohup gtimeout 15s bash testReactiveFileReader.sh &")
                })
-
+  
   output$fileReaderText <- renderText({
     # Read the text, and make it a consistent number of lines so
     # that the output box doesn't grow in height.
