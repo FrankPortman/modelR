@@ -15,6 +15,7 @@ if (!file.exists("logs/previous_inputs.log")) {
 
 fileReaderData <- reactiveFileReader(500, session = NULL, 'logs/previous_inputs.log', readLines)
 fileReaderTimes <- reactiveFileReader(500, session = NULL, 'logs/stdoutFile.txt', readLines)
+current_pid <- reactiveFileReader(1000, session = NULL, 'save_pid.txt', readLines)
 
 system("pkill -f deploy.R")
 system("nohup Rscript deploy.R & echo $! > save_pid.txt")
@@ -46,6 +47,22 @@ shinyServer(function(input, output) {
                  #system("nohup gtimeout 15s bash testReactiveFileReader.sh &")
                })
   
+  checkServerStatus <- reactiveTimer(2000)
+  
+  output$serverStatusText <- renderText({
+    checkServerStatus()
+    serverStatus <- system("curl -s \"http://localhost:8001/mean\" >/dev/null; echo $? &", intern = TRUE)
+    if (serverStatus == 0) {
+      result <- c("Deployed")
+    } else {
+      result <- c("Not Deployed")
+    }
+    result
+  })
+  
+  output$pid_value <- renderText({
+    paste0("PID = ",current_pid())
+  })
   
   output$fileReaderText <- renderText({
     # Read the text, and make it a consistent number of lines so

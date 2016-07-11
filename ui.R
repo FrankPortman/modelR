@@ -16,8 +16,8 @@ shinyUI(fluidPage(
   sidebarLayout(
     sidebarPanel(
       h2("Model Status"),
-      h2("Deployed"),
-      h3("PID = 12345"),
+      h2(textOutput("serverStatusText")),
+      h3(textOutput("pid_value")),
       actionButton("kill", "Kill Model"),
       actionButton("redeploy", "Redeploy Model"),
       actionButton("clear", "Clear Logs"),
