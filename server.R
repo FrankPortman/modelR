@@ -17,10 +17,12 @@ fileReaderData <- reactiveFileReader(500, session = NULL, 'logs/previous_inputs.
 fileReaderTimes <- reactiveFileReader(500, session = NULL, 'logs/stdoutFile.txt', readLines)
 current_pid <- reactiveFileReader(1000, session = NULL, 'save_pid.txt', readLines)
 
-system("pkill -f deploy.R")
-system("nohup Rscript deploy.R & echo $! > save_pid.txt")
-
 pred_function <- "mean"
+pred_file <- "mean.R"
+
+system("pkill -f deploy.R")
+system(paste0("nohup Rscript deploy.R ", pred_file, " & echo $! > save_pid.txt"))
+
 
 shinyServer(function(input, output) {
   
@@ -36,7 +38,7 @@ shinyServer(function(input, output) {
   observeEvent(input$redeploy,
                {
                  system("kill -9 `cat save_pid.txt`")
-                 system("nohup Rscript deploy.R & echo $! > save_pid.txt")
+                 system(paste0("nohup Rscript deploy.R ", pred_file, " & echo $! > save_pid.txt"))
                })
   
   observeEvent(input$test,
@@ -58,7 +60,7 @@ shinyServer(function(input, output) {
     checkServerStatus()
     serverStatusCall <- paste0("curl -s \"http://localhost:8001/",
                                pred_function,"\" >/dev/null; echo $? &")
-    serverStatus <- system("curl -s \"http://localhost:8001/mean\" >/dev/null; echo $? &", intern = TRUE)
+    serverStatus <- system(serverStatusCall, intern = TRUE)
     if (serverStatus == 0) {
       result <- c("Deployed")
     } else {
