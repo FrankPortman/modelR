@@ -17,11 +17,12 @@ fileReaderData <- reactiveFileReader(500, session = NULL, 'logs/previous_inputs.
 fileReaderTimes <- reactiveFileReader(500, session = NULL, 'logs/stdoutFile.txt', readLines)
 current_pid <- reactiveFileReader(1000, session = NULL, 'save_pid.txt', readLines)
 
-pred_function <- "mean"
-pred_file <- "mean.R"
+pred_function <- "predict"
+pred_file <- data.frame(value = "mean.R", stringsAsFactors = FALSE)
+currently_deployed  <- data.frame(value = pred_file$value, stringsAsFactors = FALSE)
 
 system("pkill -f deploy.R")
-system(paste0("nohup Rscript deploy.R ", pred_file, " & echo $! > save_pid.txt"))
+system(paste0("nohup Rscript deploy.R ", pred_file$value, " & echo $! > save_pid.txt"))
 
 
 shinyServer(function(input, output) {
@@ -38,7 +39,9 @@ shinyServer(function(input, output) {
   observeEvent(input$redeploy,
                {
                  system("kill -9 `cat save_pid.txt`")
-                 system(paste0("nohup Rscript deploy.R ", pred_file, " & echo $! > save_pid.txt"))
+                 system(paste0("nohup Rscript deploy.R ", pred_file$value, " & echo $! > save_pid.txt"))
+                 currently_deployed <<- reactiveValues(value = pred_file$value)
+                 
                })
   
   observeEvent(input$test,
@@ -52,6 +55,11 @@ shinyServer(function(input, output) {
                                        pred_function, " &")
                  system(systemCall)
                  #system("nohup gtimeout 15s bash testReactiveFileReader.sh &")
+               })
+  
+  observeEvent(input$prediction_file,
+               {
+                 pred_file <<- reactiveValues(value = file.choose())
                })
   
   checkServerStatus <- reactiveTimer(2000)
@@ -69,9 +77,9 @@ shinyServer(function(input, output) {
     result
   })
   
-  output$pid_value <- renderText({
-    paste0("PID = ",current_pid())
-  })
+  # output$pid_value <- renderText({
+  #   paste0("PID = ",current_pid())
+  # })
   
   output$fileReaderText <- renderText({
     # Read the text, and make it a consistent number of lines so
@@ -91,4 +99,15 @@ shinyServer(function(input, output) {
     latencies <- as.numeric(fileReaderTimes())
     ggplot2::qplot(latencies)
   })
+  
+  output$predLocation <- renderText({
+    checkServerStatus()
+    pred_file$value
+  })
+  
+  output$currentPredLocation <- renderText({
+    checkServerStatus()
+    currently_deployed$value
+  })
+  
 })
